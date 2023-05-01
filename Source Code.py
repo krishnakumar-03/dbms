@@ -13,22 +13,15 @@ bg_color='#0d365c'
 
 #*****************Initialization***********
 c_name=StringVar()
-a="String"#c_name.get()
 c_phone=StringVar()
-c=c_phone.get()
 item=StringVar()
-i=item.get()
 Rate=IntVar()
-r=Rate.get()
 quantity=IntVar()
-q=quantity.get()
 bill_no=IntVar()
 x=random.randint(1000,9999)
 bill_no.set(x)
-b=bill_no.get()
 global l
 l=[]
-s=0
 
 #****************Functions*********************
 
@@ -61,21 +54,50 @@ def gbill():
 
 def dbconnect():
     try:
-      db=mysql.connector.connect(host='localhost',user='SYSTEM', password='123456', database='billing_system')
-      mycursor=db.cursor()
-      mycursor.execute('CREATE TABLE IF NOT EXISTS bill( bill_no int NOT NULL PRIMARY KEY, c_name varchar(20) DEFAULT NULL, c_phone varchar(10) DEFAULT NULL, item varchar(20) DEFAULT NULL, rate int DEFAULT NULL, quantity int DEFAULT NULL, total int DEFAULT NULL);')
-      mycursor.execute('INSERT INTO bill (bill_no, c_name, c_phone, item, rate, quantity, total) VALUES (%i,%s,%s,%s,%i,%i,%i);', (b,a,c,i,r,q,s))
-      db.commit()
+        db = mysql.connector.connect(
+            host='localhost',
+            user='SYSTEM',
+            password='123456', # replace with the actual password
+            database='billing_system'
+        )
+        mycursor = db.cursor()
 
+        mycursor.execute('''CREATE TABLE IF NOT EXISTS bill (
+                                bill_no INT NOT NULL PRIMARY KEY,
+                                c_name VARCHAR(20) DEFAULT NULL,
+                                c_phone VARCHAR(10) DEFAULT NULL,
+                                item VARCHAR(20) DEFAULT NULL,
+                                rate INT DEFAULT NULL,
+                                quantity INT DEFAULT NULL,
+                                total INT DEFAULT NULL);''')
+
+        # get variable values after user input
+        a = c_name.get()
+        c = c_phone.get()
+        i = item.get()
+        r = Rate.get()
+        q = quantity.get()
+        s = sum(l)
+
+        mycursor.execute('''INSERT INTO bill 
+                                (bill_no, c_name, c_phone, item, rate, quantity, total) 
+                                VALUES (%s,%s,%s,%s,%s,%s,%s)''',
+                            [bill_no.get(), a, c, i, r, q, s])
+
+        db.commit()
+        print("Data inserted successfully.")
+        
     except mysql.connector.Error as err:
-      if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Something is wrong with your user name or password")
-      elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print("Database does not exist")
-      else:
-        print(err)
-    else:
-      db.close()
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+            
+    #finally:
+    #    db.close()
+
 
 def clear():
     c_name.set('')
@@ -102,7 +124,7 @@ def save_bill():
     
 def welcome():
     textarea.delete(1.0,END)
-    textarea.insert(END,"           Welcome Punithastalam Biryani Center!!")
+    textarea.insert(END,"           Welcome to Punithastalam Biryani Center!!")
     textarea.insert(END,f"\n\nBill Number:\t\t{bill_no.get()}")
     textarea.insert(END,f"\nCustomer Name:\t\t{c_name.get()}")
     textarea.insert(END,f"\nPhone Number:\t\t{c_phone.get()}")
