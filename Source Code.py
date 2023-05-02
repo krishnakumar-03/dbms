@@ -57,12 +57,12 @@ def dbconnect():
         db = mysql.connector.connect(
             host='localhost',
             user='SYSTEM',
-            password='123456', # replace with the actual password
+            password='123456',
             database='billing_system'
         )
         mycursor = db.cursor()
 
-        mycursor.execute('''CREATE TABLE IF NOT EXISTS bill (
+        mycursor.execute('''CREATE TABLE IF NOT EXISTS bills (
                                 bill_no INT NOT NULL PRIMARY KEY,
                                 c_name VARCHAR(20) DEFAULT NULL,
                                 c_phone VARCHAR(10) DEFAULT NULL,
@@ -79,7 +79,7 @@ def dbconnect():
         q = quantity.get()
         s = sum(l)
 
-        mycursor.execute('''INSERT INTO bill 
+        mycursor.execute('''INSERT INTO bills 
                                 (bill_no, c_name, c_phone, item, rate, quantity, total) 
                                 VALUES (%s,%s,%s,%s,%s,%s,%s)''',
                             [bill_no.get(), a, c, i, r, q, s])
@@ -95,8 +95,8 @@ def dbconnect():
         else:
             print(err)
             
-    #finally:
-    #    db.close()
+    finally:
+        db.close()
 
 
 def clear():
@@ -116,7 +116,6 @@ def exit():
 def save_bill():
     op=messagebox.askyesno("Save bill","Do you want to save the Bill?")
     if op>0:
-        #bill_details=textarea.get('1.0',END)
         dbconnect()
         messagebox.showinfo("Saved",f"Bill no, :{bill_no.get()} Saved Successfully")
     else:
@@ -124,7 +123,7 @@ def save_bill():
     
 def welcome():
     textarea.delete(1.0,END)
-    textarea.insert(END,"           Welcome to Punithastalam Biryani Center!!")
+    textarea.insert(END,"         Welcome to Punithastalam Biryani Center!!")
     textarea.insert(END,f"\n\nBill Number:\t\t{bill_no.get()}")
     textarea.insert(END,f"\nCustomer Name:\t\t{c_name.get()}")
     textarea.insert(END,f"\nPhone Number:\t\t{c_phone.get()}")
@@ -148,6 +147,7 @@ cname_txt=Entry(F1,width=15,textvariable=c_name,font='arial 15 bold',relief=SUNK
 
 cphone_lbl=Label(F1,text='Phone No. ',font=('times new romon',18,'bold'),bg=bg_color,fg='white').grid(row=0,column=2,padx=20,pady=5)
 cphone_txt=Entry(F1,width=15,font='arial 15 bold',textvariable=c_phone,relief=SUNKEN,bd=7).grid(row=0,column=3,padx=10,pady=5)
+
 
 #*****************Product details**********************
 
@@ -187,7 +187,7 @@ itm3.grid(row=1, column=0, padx=30, pady=15, sticky='W')
 itm4= Label(f3, text='Rs.240', font=('times new romon',14, 'bold'), bg=bg_color, fg='lightgreen')
 itm4.grid(row=1, column=1, padx=10, pady=15, sticky='W')
 
-itm5= Label(f3, text='Chicken 65(10gms)', font=('times new romon',14, 'bold'), bg=bg_color, fg='lightgreen')
+itm5= Label(f3, text='Chicken 65(100gms)', font=('times new romon',14, 'bold'), bg=bg_color, fg='lightgreen')
 itm5.grid(row=2, column=0, padx=30, pady=15, sticky='W')
 
 itm6= Label(f3, text='Rs.150', font=('times new romon',14, 'bold'), bg=bg_color, fg='lightgreen')
